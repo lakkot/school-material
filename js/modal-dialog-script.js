@@ -85,24 +85,24 @@ function showDialog(title, text) {
   confirmButton.focus();
 
   return new Promise((resolve, reject) => {
+    rejectButton.addEventListener('click', closeModal);
     confirmButton.addEventListener('click', () => {
+      //reset the dialogPromiseReject variable, otherwise will keep returning not confirmed
+      dialogPromiseReject = null;
       closeModal();
       resolve();
     });
-    rejectButton.addEventListener('click', closeModal);
     //set up dialogPromiseReject for hide modal function so that it rejects when closing dialog in any other way than confirm
     dialogPromiseReject = reject;
   });
-
 }
 
 document.querySelector('#show-dialog').addEventListener('click', () => {
     showDialog('confirmation', 'do you confirm this?').then(
       //addind a 'then' function to produce alerts based on Promise
-      () => {alert('confirmed!')},
-      () => {alert('not confirmed')},
-    );
+      () => {alert('confirmed!');
+    }, () => {alert('not confirmed');
   });
-
+});
 
 }());
