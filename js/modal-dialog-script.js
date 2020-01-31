@@ -41,8 +41,14 @@ $showModalButton.addEventListener('click', function() {
  })
 
 
+var dialogPromiseReject;
+
 function closeModal() {
   $modal.classList.remove('is-visible');
+  if(dialogPromiseReject) {
+    dialogPromiseReject();
+    dialogPromiseReject = null;
+  }
 }
 
 
@@ -59,6 +65,44 @@ $modal.addEventListener('click', function(e) {
     closeModal();
   }
 })
+
+//creating a dialog
+function showDialog(title, text) {
+  showModal(title, text);
+
+  //creating confirm an cancel buttons
+  var modal = $modal.querySelector('.modal');
+  var confirmButton = document.createElement('button');
+  confirmButton.classList.add('confirm');
+  confirmButton.innerText = 'confirm';
+  var rejectButton = document.createElement('button');
+  rejectButton.classList.add('reject');
+  rejectButton.innerText = 'reject';
+  modal.appendChild(confirmButton);
+  modal.appendChild(rejectButton);
+
+  //focus on the confirm button on opening the dialog so that user can simply press addEventListener
+  confirmButton.focus();
+
+  return new Promise((resolve, reject) => {
+    confirmButton.addEventListener('click', () => {
+      closeModal();
+      resolve();
+    });
+    rejectButton.addEventListener('click', closeModal);
+    //set up dialogPromiseReject for hide modal function so that it rejects when closing dialog in any other way than confirm
+    dialogPromiseReject = reject;
+  });
+
+}
+
+document.querySelector('#show-dialog').addEventListener('click', () => {
+    showDialog('confirmation', 'do you confirm this?').then(
+      //addind a 'then' function to produce alerts based on Promise
+      () => {alert('confirmed!')},
+      () => {alert('not confirmed')},
+    );
+  });
 
 
 }());
