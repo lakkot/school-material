@@ -52,13 +52,13 @@
   }
 
 
-
+  //close modal when escaape is clicked
   window.addEventListener('keydown', (e) => {
     if(e.key === 'Escape' && $modal.classList.contains('is-visible')) {
       closeModal();
     }
   })
-
+  //close modal when clicked outside the window
   $modal.addEventListener('click', function(e) {
     var target = e.target;
     if (target === $modal) {
